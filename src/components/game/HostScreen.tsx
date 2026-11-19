@@ -38,6 +38,16 @@ export function HostScreen({ code }: { code: string }) {
 
   useBots(code, token ?? null, room, players, cards);
 
+  // TV용: 화면 폭에 맞춰 전체 글자 크기를 키웁니다 (1920px에서 약 1.3배)
+  useEffect(() => {
+    const el = document.documentElement;
+    const prev = el.style.fontSize;
+    el.style.fontSize = "clamp(14px, 1.1vw, 30px)";
+    return () => {
+      el.style.fontSize = prev;
+    };
+  }, []);
+
   const call = useCallback(
     async (fn: string, args: Record<string, unknown> = {}) => {
       if (!token) return;
@@ -268,8 +278,8 @@ function Lobby({ players, joinUrl, code, call }: StageProps) {
   return (
     <div className="grid h-full grid-cols-[auto_1fr] items-center gap-[4vw]">
       <div className="flex flex-col items-center gap-5 anim-rise">
-        <div className="rounded-3xl bg-white p-5 shadow-gold">
-          {joinUrl && <QRCodeSVG value={joinUrl} size={340} level="M" />}
+        <div className="w-[17rem] rounded-3xl bg-white p-5 shadow-gold">
+          {joinUrl && <QRCodeSVG value={joinUrl} size={512} level="M" style={{ width: "100%", height: "auto", display: "block" }} />}
         </div>
         <div className="text-center">
           <div className="text-lg text-muted-foreground">방 코드</div>
@@ -706,7 +716,7 @@ function Final({ room, sorted, ranks, call }: StageProps) {
                   className={cn(
                     "flex w-full items-start justify-center rounded-t-2xl pt-4 font-display text-6xl",
                     h,
-                    place === 1 ? "bg-gold-gradient text-primary-foreground shadow-gold" : "bg-card text-gold",
+                    place === 1 ? "bg-gold-gradient text-primary-foreground shadow-gold" : "border-2 border-b-0 border-gold/30 bg-card text-gold",
                   )}
                 >
                   {place}
